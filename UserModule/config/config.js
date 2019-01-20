@@ -1,5 +1,5 @@
-require('dotenv').load()
-const env = process.env.NODE_ENV
+require('dotenv').load();
+const env = process.env.NODE_ENV;
 
 const development = {
   app: {
@@ -14,7 +14,7 @@ const development = {
     mongoDebug: process.env.DEV_DB_DEBUGGER,
     name: process.env.DEV_DB_NAME
   }
-}
+};
 
 const production = {
   app: {
@@ -29,11 +29,11 @@ const production = {
     mongoDebug: process.env.PROD_DB_DEBUGGER,
     name: process.env.PROD_DB_NAME
   }
-}
+};
 
 const config = {
   development,
   production
-}
+};
 
-module.exports = config[env]
+module.exports = config[env];

@@ -1,8 +1,8 @@
-var winston = require('winston')
-var fs = require('fs')
+const winston = require('winston');
+const fs = require('fs');
 
 if(!fs.existsSync('logs')){
-  fs.mkdirSync('logs')
+  fs.mkdirSync('logs');
 }
 
 module.exports = winston.createLogger({
@@ -36,4 +36,4 @@ module.exports = winston.createLogger({
     })
   ],
   exitOnError: false
-})
+});

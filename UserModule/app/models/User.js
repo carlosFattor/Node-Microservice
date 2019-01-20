@@ -1,7 +1,9 @@
 const bcrypt = require('bcrypt-nodejs');
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
+const jwt = require('jsonwebtoken');
 
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
@@ -11,36 +13,50 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  passwordResetToken: {
+  activated: {
     type: String
   },
-  passwordResetExpires: Date,
+  userStatus: {
+    type: String
+  },
+  createdAt: {
+    type: Date,
+    default: new Date().toISOString()
+  },
+  updatedAt: {
+    type: Date,
+    default: new Date().toISOString()
+  },
   tokens: {
     type: Array,
     default: []
   },
-  roles: Array,
-  accountId: {
-    type: String,
-    required: true
-  },
   profile: {
-    name: String,
+    firstName: String,
     lastName: String,
     gender: String,
-    location: String,
+    location: Object,
     bourn: Date,
     phone: Number,
-    avatar: String
+    avatar: String,
+    accountId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Account'
+    },
+    roles: Array
   }
 }, {
   timestamps: true
-})
+});
+
+UserSchema.plugin(uniqueValidator, {
+  message: 'is already taken.'
+});
 
 /**
  * Password hash middleware.
  */
-userSchema.pre('save', function save(next) {
+UserSchema.pre('save', function save(next) {
   const user = this;
   if (!user.isModified('password')) {
     return next();
@@ -62,26 +78,23 @@ userSchema.pre('save', function save(next) {
 /**
  * Helper method for validating user's password.
  */
-userSchema.methods.comparePassword = function comparePassword(candidatePassword, callback) {
+UserSchema.methods.comparePassword = function comparePassword(candidatePassword, callback) {
   bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
     callback(err, isMatch);
   });
 };
 
-/*
- * Returning a simple user
- */
-userSchema.methods.simpleUser = function simpleUser(user) {
-  const email = user.email;
-  const response = {
-    email: email,
-    updatedAt: user.updatedAt,
-    roles: user.roles,
-    profile: user.profile
-  };
-  return response;
+UserSchema.methods.generateJWT = function (secret, expiresIn) {
+  return jwt.sign({
+    _id: this._id,
+    email: this.email,
+    accountId: this.profile.accountId,
+    roles: this.profile.roles
+  }, secret, {
+    expiresIn: expiresIn
+  });
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', UserSchema);
 
 module.exports = User;

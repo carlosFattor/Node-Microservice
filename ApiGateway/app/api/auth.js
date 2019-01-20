@@ -1,18 +1,18 @@
-const HttpStatus = require('http-status-codes')
-const jwt = require('jsonwebtoken')
+const HttpStatus = require('http-status-codes');
+const jwt = require('jsonwebtoken');
 
-const api = {}
+const api = {};
 
 module.exports = (app) => {
   api.verifyVersion = (req, res) => {
     res.status(HttpStatus.OK).json({
       version: '1.0-snapshot'
-    })
-  }
+    });
+  };
   
   api.verifyToken = (req, res, next) => {
-    console.log('Verificando token?!')
-    next()
+    console.log('Verificando token?!');
+    next();
     // let token = req.headers['x-access-token'];
     // if (token) {
     //     jwt.verify(token.split(" ")[1], app.get('secret'), (error, decoded) => {
@@ -27,7 +27,7 @@ module.exports = (app) => {
     //     logger.error("Token rejected not found");
     //     return res.sendStatus(401).end();
     // }
-  }
+  };
 
-  return Object.assign({}, api)
-}
+  return Object.assign({}, api);
+};

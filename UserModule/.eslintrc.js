@@ -1,11 +1,17 @@
 module.exports = {
     "env": {
+        "browser": true,
+        "commonjs": true,
         "es6": true,
         "node": true
     },
     "extends": "eslint:recommended",
     "parserOptions": {
-        "ecmaVersion": 2018
+        "ecmaVersion": 2018,
+        "ecmaFeatures": {
+            "globalReturn": true,
+            "experimentalObjectRestSpread": true
+        }
     },
     "rules": {
         "indent": [
@@ -22,7 +28,7 @@ module.exports = {
         ],
         "semi": [
             "error",
-            "never"
+            "always"
         ]
     }
 };
