@@ -1,9 +1,9 @@
-const url = require('url');
+import { format } from 'url';
 
 function _formatResource(req, consul) {
   const service = req.path.split('/')[3];
   const URI = consul.getData(service);
-  const URL = url.format({
+  const URL = format({
     pathname: URI + req.path,
     query: req.query
   });
@@ -23,7 +23,5 @@ function _serviceUnavaliable(res, service) {
   });
 }
 
-module.exports = {
-  formatResource: _formatResource,
-  serviceUnavaliable: _serviceUnavaliable
-};
+export const formatResource = _formatResource;
+export const serviceUnavaliable = _serviceUnavaliable;

@@ -1,16 +1,16 @@
-const express = require('express');
-const consign = require('consign');
-const bodyParser = require('body-parser');
-const expressValidator = require('express-validator');
-const expressStatusMonitor = require('express-status-monitor');
-const compression = require('compression');
-const morgan = require('morgan');
-const cors = require('cors');
-const helmet = require('helmet');
+import express from 'express';
+import consign from 'consign';
+import { urlencoded, json } from 'body-parser';
+import expressValidator from 'express-validator';
+import expressStatusMonitor from 'express-status-monitor';
+import compression from 'compression';
+import morgan from 'morgan';
+import cors from 'cors';
+import helmet from 'helmet';
 
 const app = express();
 
-module.exports = () => {
+export default () => {
 
   app.use(helmet());
   app.use(function (req, res, next) {
@@ -27,18 +27,17 @@ module.exports = () => {
     }
   }));
   app.use(cors());
-  app.use(express.static('./public'));
-  app.use(bodyParser.urlencoded({
+  app.use(urlencoded({
     extended: true
   }));
   app.use(expressValidator());
   app.use(expressStatusMonitor());
   app.use(compression());
-  app.use(bodyParser.json());
+  app.use(json());
   app.set('secret', 'Gu14t0An4lyt1cs');
 
   consign({
-    cwd: 'app'
+    cwd: 'src/app'
   })
     .include('consul')
     .then('api')

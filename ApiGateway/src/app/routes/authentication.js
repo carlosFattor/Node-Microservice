@@ -1,10 +1,7 @@
-const httpProxy = require('http-proxy');
-const {
-  serviceUnavaliable,
-  formatResource
-} = require('../utils');
+import { createProxyServer } from 'http-proxy';
+import { serviceUnavaliable, formatResource } from '../utils';
 
-const apiProxy = httpProxy.createProxyServer();
+const apiProxy = createProxyServer();
 
 apiProxy.on('proxyReq', (proxyReq, req) => {
   if (req.body) {
@@ -16,21 +13,8 @@ apiProxy.on('proxyReq', (proxyReq, req) => {
   }
 });
 
-
 module.exports = (app) => {
-  const api = app.api.auth;
   const consul = app.consul.config;
-
-  /*
-   * API version
-   */
-  app.get('/api/version', api.verifyVersion);
-
-  /*
-   * Verify all request if the token is valid
-   */
-  app.use('/api/v1/*', api.verifyToken);
-
   /*
   * Method to authenticate users
   */
@@ -46,13 +30,11 @@ module.exports = (app) => {
   });
 
   /*
-   * Handler all request and find a specified service needed
-   */
-  app.all('/api/v1/*', (req, res) => {
-    const {
-      URI,
-      service
-    } = formatResource(req, consul);
+  * Method to refresh token
+  */
+  app.post('/api/user-service/refreshtoken', (req, res) => {
+    const service = 'user-service';
+    const URI = consul.getData(service);
  
     if (!URI) serviceUnavaliable(res, service);
  
